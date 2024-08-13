@@ -9,34 +9,16 @@ import {
   UseInterceptors,
   UploadedFile,
 } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express'; // Import this from '@nestjs/platform-express'
-import * as multer from 'fastify-multer'; // Import `fastify-multer` here
-import { extname } from 'path';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { multerOptions } from '../config/fastify-multer.config';
+import { VideoSerice } from 'src/services/video.service';
 
 @Controller('video')
 export class VideoController {
-  constructor(private readonly videoService: VideoService) {}
+  constructor(private readonly videoService: VideoSerice) {}
 
   @Post('upload')
-  @UseInterceptors(
-    FileInterceptor('file', {
-      storage: multer.diskStorage({
-        destination: './uploads/videos',
-        filename: (req, file, callback) => {
-          const filename = `${Date.now()}${extname(file.originalname)}`;
-          callback(null, filename);
-        },
-      }),
-      fileFilter: (req, file, callback) => {
-        if (!file.mimetype.startsWith('video/')) {
-          return callback(
-            new Error('Invalid file type. Only video files are allowed.'),
-          );
-        }
-        callback(null, true);
-      },
-    }),
-  )
+  @UseInterceptors(FileInterceptor('file', multerOptions))
   async upload(
     @Body() createVideoDto,
     @UploadedFile() file: Express.Multer.File,

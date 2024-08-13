@@ -14,7 +14,7 @@ export class VideoSerice {
     });
   }
 
-  async findAll(id: number) {
+  async findAll() {
     return this.prisma.video.findMany();
   }
 
