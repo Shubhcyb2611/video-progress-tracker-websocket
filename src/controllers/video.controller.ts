@@ -6,11 +6,11 @@ import {
   Body,
   Get,
   Param,
-  UploadedFile,
   UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
-import * as multer from 'fastify-multer';
+import { FileInterceptor } from '@nestjs/platform-express'; // Import this from '@nestjs/platform-express'
+import * as multer from 'fastify-multer'; // Import `fastify-multer` here
 import { extname } from 'path';
 
 @Controller('video')
@@ -24,7 +24,7 @@ export class VideoController {
         destination: './uploads/videos',
         filename: (req, file, callback) => {
           const filename = `${Date.now()}${extname(file.originalname)}`;
-          callback(null, filename); // Correctly using the callback
+          callback(null, filename);
         },
       }),
       fileFilter: (req, file, callback) => {
@@ -33,12 +33,12 @@ export class VideoController {
             new Error('Invalid file type. Only video files are allowed.'),
           );
         }
-        callback(null, true); // Correctly using the callback
+        callback(null, true);
       },
     }),
   )
   async upload(
-    @Body() createVideoDto: CreateVideoDto,
+    @Body() createVideoDto,
     @UploadedFile() file: Express.Multer.File,
   ) {
     return this.videoService.uploadVideo(createVideoDto, file.filename);
