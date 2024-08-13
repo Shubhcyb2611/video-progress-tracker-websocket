@@ -5,7 +5,7 @@ import { PrismaService } from 'src/prisma.service';
 export class VideoSerice {
   constructor(private readonly prisma: PrismaService) {}
 
-  async uploadService(createVideoData, filename: string) {
+  async uploadVideo(createVideoData, filename: string) {
     return this.prisma.video.create({
       data: {
         ...createVideoData,
