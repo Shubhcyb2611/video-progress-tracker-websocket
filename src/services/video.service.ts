@@ -43,4 +43,15 @@ export class VideoService {
     });
     this.videoGateway.handleProgress({ userId, videoId, progress });
   }
+
+  async getProgress(userId: number, videoId: number) {
+    return this.prisma.userProgress.findUnique({
+      where: {
+        userId_videoId: {
+          userId,
+          videoId,
+        },
+      },
+    });
+  }
 }
