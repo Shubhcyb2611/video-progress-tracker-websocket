@@ -32,7 +32,6 @@ export class VideoController {
       writeStream.on('finish', resolve);
       writeStream.on('error', reject);
     });
-    const uploadsDir = path.join(__dirname, '../', 'uploads');
     // Proceed to process the file and call your service
     return this.videoService.uploadVideo(createVideoDto, data.filename, 1);
   }
@@ -45,5 +44,19 @@ export class VideoController {
   @Get(':id')
   async findOne(@Param('id') id: number) {
     return this.videoService.findOne(id);
+  }
+
+  //user progress
+  @Post('progress')
+  async upsertProgress(
+    @Body() body: { userId: number; videoId: number; progress: number },
+  ) {
+    const { userId, videoId, progress } = body;
+    return this.videoService.updateProgress(userId, videoId, progress);
+  }
+
+  @Get("progress/:userId/:videoId")
+  async getProgress(@Param("userId") userId : number , @Param("videoId") videoId : number ){
+    return this.videoService.getProgress(userId , videoId)
   }
 }
