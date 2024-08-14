@@ -41,6 +41,6 @@ export class VideoService {
       update: { progress: progress },
       create: { userId: userId, videoId: videoId, progress: progress },
     });
-    
+    this.videoGateway.handleProgress({ userId, videoId, progress });
   }
 }

@@ -17,13 +17,13 @@ export class VideoGateway {
 
   @SubscribeMessage('progress')
   handleProgress(
-    @MessageBody() data: { userId: string; videoId: string; progress: number },
+    @MessageBody() data: { userId: number; videoId: number; progress: number },
   ) {
     this.server.emit('progress', data);
   }
 
-  @SubscribeMessage("resume")
-  handleResume(@MessageBody() data :{userId : string ; videoId : string}){
-    this.server.emit ("resume" , data )
+  @SubscribeMessage('resume')
+  handleResume(@MessageBody() data: { userId: number; videoId: number }) {
+    this.server.emit('resume', data);
   }
 }
