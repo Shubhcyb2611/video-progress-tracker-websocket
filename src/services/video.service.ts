@@ -2,10 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 
 @Injectable()
-export class VideoSerice {
+export class VideoService {
   constructor(private readonly prisma: PrismaService) {}
 
   async uploadVideo(createVideoData, filename: string) {
+    console.log('hii');
     return this.prisma.video.create({
       data: {
         ...createVideoData,
