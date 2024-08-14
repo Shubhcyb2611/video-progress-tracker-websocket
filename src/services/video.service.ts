@@ -37,9 +37,10 @@ export class VideoService {
   //user progress
   async updateProgress(userId: number, videoId: number, progress: number) {
     await this.prisma.userProgress.upsert({
-      where: { AND: [{ userId: userId }, { videoId: videoId }] },
-      update: {},
-      create: {},
+      where: { userId_videoId: { userId, videoId } },
+      update: { progress: progress },
+      create: { userId: userId, videoId: videoId, progress: progress },
     });
+    
   }
 }
