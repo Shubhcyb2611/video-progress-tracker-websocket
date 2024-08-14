@@ -28,7 +28,6 @@ export const multerOptions: MulterOptions = {
   fileFilter: (req, file, callback) => {
     const fileExtension = extname(file.originalname).toLowerCase();
     const allowedExtensions = ['.png', '.jpg', '.jpeg', '.gif', '.mp4']; // Add allowed file types here
-    console.log(allowedExtensions);
     if (allowedExtensions.includes(fileExtension)) {
       callback(null, true); // Accept the file
     } else {

@@ -1,67 +1,40 @@
-// // src/controllers/video.controller.ts
-
-// import {
-//   Controller,
-//   Post,
-//   Body,
-//   Get,
-//   Param,
-//   UseInterceptors,
-//   UploadedFile,
-// } from '@nestjs/common';
-// import { FileInterceptor } from '@nestjs/platform-express';
-// import { multerOptions } from '../config/fastify-multer.config';
-// import { VideoService } from 'src/services/video.service';
-
-// @Controller('video')
-// export class VideoController {
-//   constructor(private readonly videoService: VideoService) {}
-
-//   @Post('upload')
-//   @UseInterceptors(FileInterceptor('file', multerOptions))
-//   async upload(
-//     @Body() createVideoDto,
-//     @UploadedFile() file: Express.Multer.File,
-//   ) {
-//     console.log('hiii');
-//     return this.videoService.uploadVideo(createVideoDto, file.filename);
-//   }
-
-//   @Get()
-//   async findAll() {
-//     return this.videoService.findAll();
-//   }
-
-//   @Get(':id')
-//   async findOne(@Param('id') id: number) {
-//     return this.videoService.findOne(id);
-//   }
-// }
-import {
-  Controller,
-  Post,
-  Body,
-  Get,
-  Param,
-  UseInterceptors,
-  UploadedFile,
-} from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { multerOptions } from '../config/fastify-multer.config';
+import { Controller, Post, Body, Get, Param, Req } from '@nestjs/common';
+import { FastifyRequest } from 'fastify'; // Import FastifyRequest type
 import { VideoService } from 'src/services/video.service';
+import * as fs from 'fs'; // Import file system module
+import * as path from 'path'; // Import path module
 
 @Controller('video')
 export class VideoController {
   constructor(private readonly videoService: VideoService) {}
 
   @Post('upload')
-  @UseInterceptors(FileInterceptor('file', multerOptions))
   async upload(
     @Body() createVideoDto,
-    @UploadedFile() file: Express.Multer.File,
+    @Req() request: FastifyRequest, // Use FastifyRequest type
   ) {
-    console.log('bvnm,m,m,m,m');
-    return this.videoService.uploadVideo(createVideoDto, file.filename);
+    const data = await request.file(); // Get the uploaded file from request
+    if (!data) {
+      throw new Error('No file uploaded');
+    }
+
+    const file = data.file; // The file stream
+    const filePath = path.join(__dirname, '../../', 'uploads', data.filename); // Define file path
+
+    // Create a writable stream to save the file
+    const writeStream = fs.createWriteStream(filePath);
+
+    // Pipe the file stream to the writable stream
+    file.pipe(writeStream);
+
+    // Wait for the file to be fully written
+    await new Promise((resolve, reject) => {
+      writeStream.on('finish', resolve);
+      writeStream.on('error', reject);
+    });
+    const uploadsDir = path.join(__dirname, '../', 'uploads');
+    // Proceed to process the file and call your service
+    return this.videoService.uploadVideo(createVideoDto, data.filename, 1);
   }
 
   @Get()
